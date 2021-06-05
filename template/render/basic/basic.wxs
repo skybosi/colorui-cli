@@ -1,0 +1,138 @@
+/**
+ * 处理数据使其返回数组
+ */
+var TextClassMap = {
+  title: "text-center margin-tb-xs padding-lr text-xl text-grey",
+  h1: "margin-tb-xs padding-lr text-sl text-black text-bold",
+  h2: "margin-tb-xs padding-lr text-xxl text-black text-bold",
+  h3: "margin-tb-xs padding-lr text-xl text-black text-bold",
+  h4: "margin-tb-xs padding-lr text-lg text-black text-bold",
+  h5: "margin-tb-xs padding-lr text-df text-black text-bold",
+  h: "margin-tb-xs padding-lr text-lg text-black text-bold",
+}
+
+var template = function(name) {
+  // console.log(name, TextClassMap[name])
+  return TextClassMap[name]
+}
+
+/**
+ * 更新a标签的访问状态的样式
+ */
+var clickA = function(event, ins) {
+  var st = event.instance.getState()
+  var clicked = st.clicked || 0
+  console.log('clickA', JSON.stringify(st))
+  if (!clicked) {
+    ins.selectComponent('.a-link').removeClass('text-blue').setStyle({
+      'color': 'purple',
+      'text-decoration': 'none'
+    })
+  }
+  st.clicked = clicked + 1
+  // 调用预先定义的js 逻辑层的方法
+  ins.callMethod("clickA", event)
+  return false
+}
+
+/**
+ * 处理notice bar 关闭状态
+ */
+var closeNoticebar = function(event, ins) {
+  console.log('closeNoticebar', JSON.stringify(event), JSON.stringify(ins))
+  var id = event.currentTarget.dataset.id || event.target.dataset.id
+  ins.selectComponent('.noticebar-' + id).setStyle({
+    display: 'none'
+  })
+  event.id = id;
+  (event.detail || {}).value = 0
+  // 调用预先定义的js 逻辑层的方法
+  ins.callMethod("closeNoticebar", event)
+  return false
+}
+
+/**
+ * 处理notice bar 关闭状态
+ */
+var closeTag = function(event, ins) {
+  console.log('closeTag', JSON.stringify(event), JSON.stringify(ins))
+  var id = event.currentTarget.dataset.id || event.target.dataset.id
+  ins.selectComponent('.tag-' + id).setStyle({
+    display: 'none'
+  })
+  event.id = id;
+  (event.detail || {}).value = 0
+  // 调用预先定义的js 逻辑层的方法
+  ins.callMethod("closeTag", event)
+  return false
+}
+
+var dropdown = function(event, ins) {
+  var st = event.instance.getState()
+  var clicked = st.clicked || 0
+  console.log('dropdown', JSON.stringify(event), JSON.stringify(ins))
+  var id = event.currentTarget.dataset.id || event.target.dataset.id
+  var env = event.currentTarget.dataset.env || event.target.dataset.env
+  var tindex = env._index || event.mark.tindex
+  if (!clicked) {
+    ins.selectComponent('.dropdown-item-' + tindex).removeClass("arrow").addClass("arrowdown")
+    ins.selectComponent('.dropdown-' + tindex).setStyle({
+      display: 'block'
+    })
+    st.clicked = clicked + 1
+  } else {
+    ins.selectComponent('.dropdown-item-' + tindex).removeClass("arrowdown").addClass("arrow")
+    ins.selectComponent('.dropdown-' + tindex).setStyle({
+      display: 'none'
+    })
+    st.clicked = clicked - 1
+  }
+  event.id = id
+  // 调用预先定义的js 逻辑层的方法
+  ins.callMethod("dropDown", event)
+  return false
+}
+
+var switchPopup = function(event, ins) {
+  console.log('switchModal', JSON.stringify(event), JSON.stringify(ins))
+  var id = event.currentTarget.dataset.id || event.target.dataset.id
+  var env = event.currentTarget.dataset.env || event.target.dataset.env
+  var tindex = env._index || event.mark.tindex
+  ins.selectComponent('.popup-' + tindex).removeClass("show")
+  event.id = id
+  // 调用预先定义的js 逻辑层的方法
+  ins.callMethod("clickPopup", event)
+  return false
+}
+
+var showTip = function(event, ins) {
+  // console.log('showTip', JSON.stringify(event), JSON.stringify(ins))
+  var id = event.currentTarget.dataset.id || event.target.dataset.id
+  var env = event.currentTarget.dataset.env || event.target.dataset.env
+  var tindex = env._index || event.mark.tindex
+  var st = event.instance.getState()
+  var clicked = st.clicked || 0
+  if (!clicked) {
+    ins.selectComponent('.tooltiptext-' + tindex).setStyle({
+      display: 'block'
+    })
+    st.clicked = clicked + 1
+  } else {
+    ins.selectComponent('.tooltiptext-' + tindex).setStyle({
+      display: 'none'
+    })
+    st.clicked = clicked - 1
+  }
+  event.id = id
+  // 调用预先定义的js 逻辑层的方法
+  ins.callMethod("showTip", event)
+  return false
+}
+
+module.exports.clickA = clickA;
+module.exports.showTip = showTip;
+module.exports.closeTag = closeTag;
+module.exports.dropdown = dropdown;
+module.exports.template = template;
+module.exports.switchPopup = switchPopup;
+module.exports.closeNoticebar = closeNoticebar;

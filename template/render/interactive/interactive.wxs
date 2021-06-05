@@ -1,0 +1,106 @@
+var _lastindex = 0
+var startX = 0
+var startY = 0
+var lastLeft = lastTop = 0
+
+var initTab = function(index) {
+  console.log('initTab:', _lastindex)
+  return _lastindex == index ? 'text-white cur' : ''
+}
+
+var tabSelect = function(event, ins) {
+  var st = ins.getState()
+  var lastindex = st.lastindex || 0
+  // console.log('tabSelect:', JSON.stringify(event), JSON.stringify(st), _lastindex)
+  var all = ins.selectAllComponents('#nav-tab')
+  var index = event.currentTarget.dataset.index || event.target.dataset.index
+  st.lastindex = index
+  for (var i = 0; i < all.length; ++i) {
+    if (i != index) {
+      all[i].removeClass("text-white cur")
+    } else {
+      all[i].addClass("text-white cur")
+      _lastindex = i
+    }
+  }
+  return false
+}
+
+var tabWidth = function(event, ins) {
+  var st = event.instance.getState()
+  var expand = st.expand || 0
+  console.log('tabWidth:', JSON.stringify(event))
+  if (!expand) {
+    st.expand = expand + 1
+    ins.selectComponent('.tree-tab').setStyle({
+      width: '200rpx',
+      transform: 'width 2s'
+    })
+    ins.selectComponent('.tab-tool').setStyle({
+      opacity: 0.5,
+      left: '40rpx',
+      transform: 'left 2s'
+    }).addClass('cuIcon-roundleftfill').removeClass('cuIcon-roundright')
+    var all = ins.selectAllComponents('.tree-item')
+    for (var i = 0; i < all.length; ++i) {
+      all[i].addClass('padding-xs')
+    }
+  } else {
+    ins.selectComponent('.tree-tab').setStyle({
+      width: '0rpx',
+      transform: 'width 2s'
+    })
+    ins.selectComponent('.tab-tool').setStyle({
+      opacity: 0.5,
+      left: '12rpx',
+      transform: 'left 2s'
+    }).addClass('cuIcon-roundright').removeClass('cuIcon-roundleftfill')
+    var all = ins.selectAllComponents('.tree-item')
+    for (var i = 0; i < all.length; ++i) {
+      all[i].removeClass('padding-xs').addClass('padding-bottom-xs')
+    }
+    st.expand = 0
+  }
+  return false
+}
+
+function touchstart(event, ins) {
+  var touch = event.touches[0] || event.changedTouches[0]
+  startX = touch.pageX
+  startY = touch.pageY
+  ins.callMethod('onClickMovable', {
+    complete: function(res) {
+      console.log('args', res)
+    }
+  })
+}
+
+function touchmove(event, ins) {
+  var touch = event.touches[0] || event.changedTouches[0]
+  var pageX = touch.pageX
+  var pageY = touch.pageY
+  var deltaX = pageX - startX
+  var deltaY = pageY - startY
+  var left = deltaX + lastLeft
+  var top = deltaY + lastTop
+  startX = pageX
+  startY = pageY
+  lastLeft = left
+  lastTop = top
+  // console.log(deltaX, deltaY)
+  if (Math.abs(deltaX) > 1.5 || Math.abs(deltaY) > 1.5){
+    ins.selectComponent('.movable').setStyle({
+      left: left + 'px',
+      top: top + 'px'
+    })
+  }
+  return false
+}
+
+module.exports = {
+  touchstart: touchstart,
+  touchmove: touchmove,
+  initTab: initTab,
+  tabWidth: tabWidth,
+  tabSelect: tabSelect
+}

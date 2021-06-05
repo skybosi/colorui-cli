@@ -1,0 +1,34 @@
+/* colorui/components/cu-custom.wxss */
+@keyframes around {
+  from {
+    margin-left: 100%;
+  }
+
+  to {
+    /* var接受传入的变量 */
+    margin-left: var(--marqueeWidth--);
+  }
+}
+
+.marquee_text {
+  white-space: nowrap;
+  animation-name: around;
+  animation-duration: 10s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+button {
+  color: white;
+  border-radius: 0;
+  background-color: #fff0;
+}
+
+button::after {
+  border: none;
+}
+
+.button-hover {
+  color: #000;
+  background-color: #fff0;
+}
